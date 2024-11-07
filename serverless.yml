@@ -33,6 +33,36 @@ functions:
       - httpApi:
           path: /
           method: get
+  createUser:
+    handler: src/user/user.addUser
+    events:
+      - httpApi:
+          path: /user
+          method: post
+  getAllUsers:
+    handler: src/user/user.getAllUsers
+    events:
+      - httpApi:
+          path: /user
+          method: get
+  getUser:
+    handler: src/user/user.getUser
+    events:
+      - httpApi:
+          path: /user/{userId}
+          method: get
+  updateUser:
+    handler: src/user/user.updateUser
+    events:
+      - httpApi:
+          path: /user/{userId}
+          method: put
+  deleteUser:
+    handler: src/user/user.deleteUser
+    events:
+      - httpApi:
+          path: /user/{userId}
+          method: delete
 
 resources:
   Resources:
