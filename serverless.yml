@@ -1,0 +1,61 @@
+org: winkreact
+service: wink-react-native-back-end
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  httpApi:
+    cors:
+      allowedOrigins:
+        - "*"
+      allowedMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:*
+      Resource:
+        - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/UserTable
+        - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/TransactionTable
+
+functions:
+  hello:
+    handler: src/handler.main
+    events:
+      - httpApi:
+          path: /
+          method: get
+
+resources:
+  Resources:
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: UserTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+
+    TransactionTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: TransactionTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: transactionId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: transactionId
+            KeyType: HASH
