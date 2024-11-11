@@ -25,14 +25,7 @@ provider:
       Resource:
         - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/UserTable
         - arn:aws:dynamodb:${self:provider.region}:${aws:accountId}:table/TransactionTable
-
 functions:
-  hello:
-    handler: src/handler.main
-    events:
-      - httpApi:
-          path: /
-          method: get
   createUser:
     handler: src/user/user.addUser
     events:
@@ -63,7 +56,36 @@ functions:
       - httpApi:
           path: /user/{userId}
           method: delete
-
+  createTransaction:
+    handler: src/transaction/transaction.addTransaction
+    events:
+      - httpApi:
+          path: /transaction
+          method: post
+  getAllTransactions:
+    handler: src/transaction/transaction.getAllTransactions
+    events:
+      - httpApi:
+          path: /transaction
+          method: get
+  getTransaction:
+    handler: src/transaction/transaction.getTransaction
+    events:
+      - httpApi:
+          path: /transaction/{transactionId}
+          method: get
+  updateTransaction:
+    handler: src/transaction/transaction.updateTransaction
+    events:
+      - httpApi:
+          path: /transaction/{transactionId}
+          method: put
+  deleteTransaction:
+    handler: src/transaction/transaction.deleteTransaction
+    events:
+      - httpApi:
+          path: /transaction/{transactionId}
+          method: delete
 resources:
   Resources:
     UserTable:
@@ -86,6 +108,10 @@ resources:
         AttributeDefinitions:
           - AttributeName: transactionId
             AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
         KeySchema:
           - AttributeName: transactionId
             KeyType: HASH
+          - AttributeName: createdAt
+            KeyType: RANGE
